@@ -727,6 +727,34 @@ cdef class Class:
                 for index_mu in xrange(mu_size):
                     pk[index_k,index_z,index_mu] = self.pk(k[index_k,index_z,index_mu],z[index_z])
         return pk
+    
+    # Added to compute sigma
+# Gives sigma(R,z) for a given (R,z)
+    def sigma(self,double R,double z):
+        """
+        Gives the pk for a given R and z
+        (R is the radius in units of Mpc, so if R=8/h this will be the usual sigma8(z)
+        .. note::
+            there is an additional check to verify whether output contains `mPk`,
+           and whether k_max > ...
+            because otherwise a segfault will occur
+        """
+        cdef double sigma
+
+        if (self.pt.has_pk_matter == _FALSE_):
+            raise CosmoSevereError(
+                "No power spectrum computed. In order to get sigma(R,z) you must add mPk to the list of outputs."
+                )
+
+        if (self.pt.k_max_for_pk < self.ba.h):
+            raise CosmoSevereError(
+                "In order to get sigma(R,z) you must set 'P_k_max_h/Mpc' to 1 or bigger, in order to have k_max > 1 h/Mpc."
+                )
+
+        if spectra_sigma(&self.ba,&self.pm,&self.sp,R,z,&sigma)==_FAILURE_:
+                 raise CosmoSevereError(self.sp.error_message)
+
+        return sigma
 
     def age(self):
         self.compute(["background"])
@@ -788,6 +816,86 @@ cdef class Class:
         free(pvecback)
 
         return D_A
+    
+        def scale_independent_growth_factor(self, z): #Added
+        """
+        scale_independent_growth_factor(z)
+        Return the scale invariant growth factor D(a) for CDM perturbations
+        (exactly, the quantity defined by Class as index_bg_D in the background module)
+        Parameters
+        ----------
+        z : float
+                Desired redshift
+        """
+        cdef double tau
+        cdef int last_index #junk
+        cdef double * pvecback
+
+        pvecback = <double*> calloc(self.ba.bg_size,sizeof(double))
+
+        if background_tau_of_z(&self.ba,z,&tau)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        if background_at_tau(&self.ba,tau,self.ba.long_info,self.ba.inter_normal,&last_index,pvecback)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        D = pvecback[self.ba.index_bg_D]
+
+        free(pvecback)
+
+        return D
+    
+    def scale_independent_growth_factor_f(self, z): #Added
+        """
+        scale_independent_growth_factor_f(z)
+        Return the scale invariant growth factor f(z)=d ln D / d ln a for CDM perturbations
+        (exactly, the quantity defined by Class as index_bg_f in the background module)
+        Parameters
+        ----------
+        z : float
+                Desired redshift
+        """
+        cdef double tau
+        cdef int last_index #junk
+        cdef double * pvecback
+
+        pvecback = <double*> calloc(self.ba.bg_size,sizeof(double))
+
+
+        if background_tau_of_z(&self.ba,z,&tau)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        if background_at_tau(&self.ba,tau,self.ba.long_info,self.ba.inter_normal,&last_index,pvecback)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        f = pvecback[self.ba.index_bg_f]
+
+        free(pvecback)
+
+        return f
+
+        def z_of_tau(self, tau): #Added
+        """
+        Redshift corresponding to a given conformal time.
+        Parameters
+        ----------
+        tau : float
+                Conformal time
+        """
+        cdef double z
+        cdef int last_index #junk
+        cdef double * pvecback
+
+        pvecback = <double*> calloc(self.ba.bg_size,sizeof(double))
+
+        if background_at_tau(&self.ba,tau,self.ba.long_info,self.ba.inter_normal,&last_index,pvecback)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        z = 1./pvecback[self.ba.index_bg_a]-1.
+
+        free(pvecback)
+
+        return z
 
     def Hubble(self, z):
         """
