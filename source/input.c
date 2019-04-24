@@ -1067,11 +1067,21 @@ int input_read_parameters(
 	pba->parameters_2_size_smg = 8;
 	class_read_list_of_doubles("parameters_smg",pba->parameters_2_smg,pba->parameters_2_size_smg);
       }
+      /*Hill-valley*/
+       if (strcmp(string1,"tanh_cosh") == 0) {
+        pba->gravity_model_smg = tanh_cosh;
+        pba->field_evolution_smg = _FALSE_;
+        pba->M_pl_evolution_smg = _TRUE_;
+        flag2=_TRUE_;
+        pba->parameters_2_size_smg = 6;
+        class_read_list_of_doubles("parameters_smg",pba->parameters_2_smg,pba->parameters_2_size_smg);
+      }
+
 
 
       class_test(flag2==_FALSE_,
 		 errmsg,
-		 "could not identify gravity_theory value, check that it is one of 'propto_omega', 'propto_scale', 'eft_alphas_power_law', 'eft_gammas_power_law', 'eft_gammas_exponential' ...");
+		 "could not identify gravity_theory value, check that it is one of 'propto_omega', 'propto_scale', 'eft_alphas_power_law', 'eft_gammas_power_law', 'eft_gammas_exponential', 'tanh_cosh' ...");
       
     }// end of loop over models
     
