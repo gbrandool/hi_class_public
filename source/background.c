@@ -2206,6 +2206,10 @@ int background_initial_conditions(
       case eft_gammas_exponential:
 	pvecback_integration[pba->index_bi_M_pl_smg] = exp(pba->parameters_2_smg[0]*pow(a,pba->parameters_2_smg[4])) + exp(pba->parameters_2_smg[3]*pow(a,pba->parameters_2_smg[7])) -1.;
 	break;
+		    
+      case tanh_cosh: //Hill-valley
+        pvecback_integration[pba->index_bi_M_pl_smg] = pba->parameters_2_smg[4];
+        break;
 
     }
     
@@ -2622,6 +2626,23 @@ int background_gravity_functions(
 
     }
     
+     else if (pba->gravity_model_smg == tanh_cosh) { //Hill-valley parametrization
+
+      double c_k = pba->parameters_2_smg[0];
+      double c_m = pba->parameters_2_smg[1];
+      double a_t = pba->parameters_2_smg[2];
+      double tau = pba->parameters_2_smg[3];
+      double r = pba->parameters_2_smg[5];
+      double alpha_param;
+
+      alpha_param = tanh(tau/2. * log(a/a_t)) * pow(cosh(tau/2. * log(a/a_t)),-2.);
+      pvecback[pba->index_bg_mpl_running_smg] = c_m*alpha_param;
+      pvecback[pba->index_bg_kineticity_smg] = c_k; //There is a problem here as alpha_param may be neagtive, but alpha_K sho$
+      pvecback[pba->index_bg_braiding_smg] = -r*c_m*alpha_param; // Prop to c_m.
+      pvecback[pba->index_bg_tensor_excess_smg] = 0.; // Set this to zero.
+      pvecback[pba->index_bg_M2_smg] = M_pl;
+    }
+
     
     pvecback[pba->index_bg_H] = sqrt(rho_tot-pba->K/a/a);
     /** - compute derivative of H with respect to conformal time */
@@ -2702,8 +2723,13 @@ int background_gravity_parameters(
      printf("-> Omega_0 = %g, gamma_1 = %g, gamma_2 = %g, gamma_3 = %g, Omega_0_exp = %g, gamma_1_exp = %g, gamma_2_exp = %g, gamma_3_exp = %g \n",
 	    pba->parameters_2_smg[0],pba->parameters_2_smg[1],pba->parameters_2_smg[2],pba->parameters_2_smg[3],pba->parameters_2_smg[4],pba->parameters_2_smg[5],pba->parameters_2_smg[6],pba->parameters_2_smg[7]);
      break;
-
-    
+     
+   case tanh_cosh:
+     printf("Modified gravity: tanh_cosh with parameters: \n");
+     printf("-> c_K = %g, c_M = %g, a_t = %g, tau = %g, M_*^2_init = %g, r = %g \n",
+            pba->parameters_2_smg[0],pba->parameters_2_smg[1],pba->parameters_2_smg[2],pba->parameters_2_smg[3],
+            pba->parameters_2_smg[4],pba->parameters_2_smg[5]);
+      break; 
   }
   
   if(pba->field_evolution_smg==_FALSE_) {
