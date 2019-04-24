@@ -36,7 +36,10 @@ cdef extern from "class.h":
         int index_bg_ang_distance
         int index_bg_lum_distance
         int index_bg_conf_distance
+        int index_bg_a # Added
         int index_bg_H
+        int index_bg_D # Added
+        int index_bg_f # Added
         short long_info
         short inter_normal
         double T_cmb
@@ -316,3 +319,13 @@ cdef extern from "class.h":
     int nonlinear_k_nl_at_z(void* pba, void* pnl, double z, double* k_nl)
 
     int spectra_firstline_and_ic_suffix(void *ppt, int index_ic, char first_line[_LINE_LENGTH_MAX_], FileName ic_suffix)
+    
+    # Added to compute sigma
+    int spectra_sigma(
+                  void * pba,
+                  void * ppm,
+                  void * psp,
+                  double R,
+                  double z,
+                  double * sigma)
+
