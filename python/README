@@ -12,4 +12,6 @@ You can check that these steps worked by typing
 > python
 >>> from classy import Class
 
-If python does not complain, the Class module has been correctly installed in your python distribution. You can now import it and use its functions from your python codes.  
+If python does not complain, the Class module has been correctly installed in your python distribution. You can now import it and use its functions from your python codes.
+
+Extra modifications made in the python wrapper so MontePython can use No Slip gravity model.
