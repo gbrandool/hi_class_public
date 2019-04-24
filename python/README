@@ -14,4 +14,6 @@ You can check that these steps worked by typing
 
 If python does not complain, the Class module has been correctly installed in your python distribution. You can now import it and use its functions from your python codes.
 
-Extra modifications made in the python wrapper so MontePython can use No Slip gravity model, and compute the f\sgima_8 observable.
+IMPORTANT: Extra modifications made in the python wrapper so MontePython can compute the f\sgima_8 observable. 
+Bear in mind that this modifications are dependent of D'' diff eq, which is written for No Slip gravity in this modified version
+of the hi_class_public one. 
