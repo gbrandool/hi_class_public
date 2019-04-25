@@ -1613,7 +1613,7 @@ int spectra_indices(
        transfer functions over a wide range, and a huge computation
        time. In the current version, we prefer to switch it off, rather
        than either slowing down the code considerably, or producing
-       very inaccurate spectra.
+       very inaccurate spectra.*/
 
        if ((ppt->has_cl_cmb_temperature == _TRUE_) && (ppt->has_cl_number_count == _TRUE_) && (ppt->has_scalars == _TRUE_)) {
        psp->has_td = _TRUE_;
@@ -1623,8 +1623,8 @@ int spectra_indices(
        else {
        psp->has_td = _FALSE_;
        }
-    */
-    psp->has_td = _FALSE_;
+    
+    /*psp->has_td = _FALSE_;*/
 
     if ((ppt->has_cl_cmb_lensing_potential == _TRUE_) && (ppt->has_cl_number_count == _TRUE_) && (ppt->has_scalars == _TRUE_)) {
       psp->has_pd = _TRUE_;
