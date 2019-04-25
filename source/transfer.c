@@ -2940,13 +2940,13 @@ int transfer_dNdz_analytic(
 
   double z0,alpha,beta;
 
-  z0 = 0.55;
-  alpha = 2.0;
-  beta = 1.5;
+  z0 = 0.79;
+  alpha = 1.18;
+  beta = 1.98;
 
-  *dNdz = pow(z/z0,alpha) * exp(-pow(z/z0,beta));
+  *dNdz = beta * pow(alpha/z0,alpha+1.) * pow(tgamma(alpha),-1.) * pow(z,alpha) * exp(-alpha * z * pow(z0,-1.)); /*NVSS dNdz*/
 
-  *dln_dNdz_dz = (alpha - pow(z/z0,beta)*beta)/z;
+  *dln_dNdz_dz = alpha * (1./z-1./z0);
 
   return _SUCCESS_;
 
