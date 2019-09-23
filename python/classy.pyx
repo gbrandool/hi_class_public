@@ -817,7 +817,7 @@ cdef class Class:
 
         return D_A
     
-        def scale_independent_growth_factor(self, z): #Added
+    def scale_independent_growth_factor(self, z): #Added
         """
         scale_independent_growth_factor(z)
         Return the scale invariant growth factor D(a) for CDM perturbations
