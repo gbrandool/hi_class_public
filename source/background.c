@@ -2419,7 +2419,7 @@ int background_derivs(
 
   struct background_parameters_and_workspace * pbpaw;
   struct background * pba;
-  double * pvecback;
+  double * pvecback, a , H, Mpl_smg, rho_M;
 
   pbpaw = parameters_and_workspace;
   pba =  pbpaw->pba;
